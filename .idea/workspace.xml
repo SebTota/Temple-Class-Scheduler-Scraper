@@ -6,26 +6,75 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ac77599d-3fb7-40d5-a233-59d0702ad4d3" name="Default Changelist" comment="" />
+    <list default="true" id="ac77599d-3fb7-40d5-a233-59d0702ad4d3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/gson_2_8_6.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/json_simple_1_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Temple-Class-Scheduler-Scraper.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Temple-Class-Scheduler-Scraper.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/TESTSCHULE/Main$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/TESTSCHULE/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@class-scheduler.cr7ulterasef.us-east-2.rds.amazonaws.com" type="feb32156:DbDataSourceImpl" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@class-scheduler.cr7ulterasef.us-east-2.rds.amazonaws.com" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@class-scheduler.cr7ulterasef.us-east-2.rds.amazonaws.com" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="class_scheduler: schema" type="76f4a085:MysqlImplModel$Schema" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1YmTVMxPqFd1Lkbw72s4tWte3AU" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="redshift&#10;mysql" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="findjar.last.used.dir" value="$PROJECT_DIR$/jars/gson" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
@@ -40,53 +89,6 @@
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="Temple-Class-Scheduler-Scraper" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType" factoryName="Kotlin">
-      <module name="Temple-Class-Scheduler-Scraper" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="WORKING_DIRECTORY" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType" factoryName="Kotlin script">
-      <module name="Temple-Class-Scheduler-Scraper" />
-      <option name="filePath" />
-      <option name="vmParameters" />
-      <option name="alternativeJrePath" />
-      <option name="programParameters" />
-      <option name="passParentEnvs" value="true" />
-      <option name="workingDirectory" />
-      <option name="isAlternativeJrePathEnabled" value="false" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="filePath" />
-      <option name="vmParameters" />
-      <option name="alternativeJrePath" />
-      <option name="programParameters" />
-      <option name="passParentEnvs" value="true" />
-      <option name="workingDirectory" />
-      <option name="isAlternativeJrePathEnabled" value="false" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="WORKING_DIRECTORY" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -109,50 +111,71 @@
       <updated>1583546792979</updated>
       <workItem from="1583546801734" duration="427000" />
       <workItem from="1586052944113" duration="196000" />
-      <workItem from="1586053381174" duration="1676000" />
+      <workItem from="1586053381174" duration="2308000" />
+      <workItem from="1586093154998" duration="15463000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="WindowStateProjectService">
+    <state x="1556" y="-206" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586097354201">
+      <screen x="1440" y="-1660" width="1080" height="2560" />
+    </state>
+    <state x="1556" y="-206" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586097354201" />
     <state x="377" y="243" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1583547090907">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="377" y="243" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1440.900@0.0.1440.900" timestamp="1583547090907" />
-    <state width="1398" height="743" key="GridCell.Tab.0.bottom" timestamp="1586055317398">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1038" height="647" key="GridCell.Tab.0.bottom" timestamp="1586117505689">
+      <screen x="1440" y="-1660" width="1080" height="2560" />
     </state>
     <state width="1398" height="316" key="GridCell.Tab.0.bottom/0.0.1440.900/-538.-1080.2560.1080@0.0.1440.900" timestamp="1586053169999" />
-    <state width="1038" height="1045" key="GridCell.Tab.0.bottom/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586054693675" />
-    <state width="1398" height="743" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1586055317398" />
+    <state width="1038" height="647" key="GridCell.Tab.0.bottom/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586117505689" />
+    <state width="1398" height="743" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1586089279627" />
     <state width="1038" height="1045" key="GridCell.Tab.0.bottom/0.23.1440.877/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586054651011" />
-    <state width="1398" height="743" key="GridCell.Tab.0.center" timestamp="1586055317396">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1038" height="647" key="GridCell.Tab.0.center" timestamp="1586117505688">
+      <screen x="1440" y="-1660" width="1080" height="2560" />
     </state>
     <state width="1398" height="316" key="GridCell.Tab.0.center/0.0.1440.900/-538.-1080.2560.1080@0.0.1440.900" timestamp="1586053169996" />
-    <state width="1038" height="1045" key="GridCell.Tab.0.center/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586054693673" />
-    <state width="1398" height="743" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1586055317396" />
+    <state width="1038" height="647" key="GridCell.Tab.0.center/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586117505688" />
+    <state width="1398" height="743" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1586089279626" />
     <state width="1038" height="1045" key="GridCell.Tab.0.center/0.23.1440.877/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586054651009" />
-    <state width="1398" height="743" key="GridCell.Tab.0.left" timestamp="1586055317396">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1038" height="647" key="GridCell.Tab.0.left" timestamp="1586117505687">
+      <screen x="1440" y="-1660" width="1080" height="2560" />
     </state>
     <state width="1398" height="316" key="GridCell.Tab.0.left/0.0.1440.900/-538.-1080.2560.1080@0.0.1440.900" timestamp="1586053169992" />
-    <state width="1038" height="1045" key="GridCell.Tab.0.left/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586054693672" />
-    <state width="1398" height="743" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1586055317396" />
+    <state width="1038" height="647" key="GridCell.Tab.0.left/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586117505687" />
+    <state width="1398" height="743" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1586089279625" />
     <state width="1038" height="1045" key="GridCell.Tab.0.left/0.23.1440.877/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586054651008" />
-    <state width="1398" height="743" key="GridCell.Tab.0.right" timestamp="1586055317397">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1038" height="647" key="GridCell.Tab.0.right" timestamp="1586117505689">
+      <screen x="1440" y="-1660" width="1080" height="2560" />
     </state>
     <state width="1398" height="316" key="GridCell.Tab.0.right/0.0.1440.900/-538.-1080.2560.1080@0.0.1440.900" timestamp="1586053169998" />
-    <state width="1038" height="1045" key="GridCell.Tab.0.right/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586054693674" />
-    <state width="1398" height="743" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1586055317397" />
+    <state width="1038" height="647" key="GridCell.Tab.0.right/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586117505689" />
+    <state width="1398" height="743" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1586089279626" />
     <state width="1038" height="1045" key="GridCell.Tab.0.right/0.23.1440.877/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586054651010" />
-    <state x="-310" y="-1043" key="SettingsEditor" timestamp="1586053450234">
-      <screen x="-538" y="-1080" width="2560" height="1080" />
+    <state x="1477" y="-421" key="SettingsEditor" timestamp="1586111803452">
+      <screen x="1440" y="-1660" width="1080" height="2560" />
     </state>
     <state x="-310" y="-1043" key="SettingsEditor/0.0.1440.900/-538.-1080.2560.1080@-538.-1080.2560.1080" timestamp="1586053450234" />
+    <state x="1477" y="-421" key="SettingsEditor/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586111803452" />
     <state x="128" y="31" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1583547104855" />
+    <state x="1645" y="-328" width="670" height="676" key="search.everywhere.popup" timestamp="1586109310930">
+      <screen x="1440" y="-1660" width="1080" height="2560" />
+    </state>
+    <state x="1645" y="-328" width="670" height="676" key="search.everywhere.popup/0.0.1440.900/1440.-1660.1080.2560@1440.-1660.1080.2560" timestamp="1586109310930" />
   </component>
 </project>

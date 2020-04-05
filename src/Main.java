@@ -8,11 +8,20 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.FileReader;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import com.google.gson.Gson;
 
 public class Main {
     // Return correct WebDriver based on clients operating system
@@ -103,8 +112,12 @@ public class Main {
             WebElement termSearchInput = driver.findElement(By.id("s2id_autogen1_search"));
             termSearchInput.sendKeys(term);
 
+            /*
             WebElement foundTermButton = driver.findElements(By.xpath("//*[contains(text(), '" + term + "')]")).get(0);
             foundTermButton.click();
+             */
+
+            waitForElementId(driver, "202036", 10).click();
 
             WebElement termContinueButton = waitForElementId(driver, "term-go", 10);
             if (termContinueButton == null) { return -1; }
@@ -117,124 +130,79 @@ public class Main {
         }
     }
 
-    public static void findClass(WebDriver driver, String subject, String startCourseNumber,
+    public static void classSearch(WebDriver driver, String subject, String startCourseNumber,
                                  String endCourseNumber) {
-        // String[] classInfo = className.split(" ");
-        // System.out.println("Class Info: " + classInfo[0] + " + " + classInfo[1]);
-        waitForPageLoaded(driver);
+        StringBuilder classUrlSearch = new StringBuilder();
+        classUrlSearch.append("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?txt_subject=");
+        classUrlSearch.append(subject);
+        classUrlSearch.append("&txt_course_number_range=");
+        classUrlSearch.append(startCourseNumber);
+        classUrlSearch.append("&txt_course_number_range_to=");
+        classUrlSearch.append(endCourseNumber);
+        classUrlSearch.append("&txt_term=202036&pageMaxSize=100&sortDirection=asc");
 
-        try {
-            // BUG FIX: Keep both waits
-            // executeJavascript(driver, "document.getElementById('select2-drop-mask').style.display = 'none';");
-            waitForElementId(driver, "search-go", 60); // Wait for search button
-            waitForElementId(driver, "s2id_txt_subject", 60);
-
-            try {
-                executeJavascript(driver, "document.getElementById('splash').style.display = 'none';");
-            } catch (Exception e){
-                System.out.println("No splash screen found");
-            }
-
-            WebElement classInput = waitForElementId(driver, "s2id_txt_subject", 60);
-            classInput.click(); // Click inside the 'Subject' textbox
-
-            // Wait for subject dropdown to populate
-            waitForElementClass(driver, "select2-result-label", 30);
-
-            // BUG FIX: Disable the mask preventing key stroke input
-            executeJavascript(driver,
-                    "document.getElementById('select2-drop-mask').style.display = 'none';");
-            waitForElementId(driver, "s2id_autogen1", 20);
-            driver.findElement(By.id("s2id_autogen1")).sendKeys(subject); // Enter subject abrev
-
-            waitForElementId(driver, subject, 10); // Wait for the subject dropdown to populate
-            driver.findElement(By.id(subject)).click();
-
-            // Enter start and end course number into 'Course Number Range' textboxes
-            driver.findElement(By.id("txt_course_number_range")).sendKeys(startCourseNumber);
-            driver.findElement(By.id("txt_course_number_range_to")).sendKeys(endCourseNumber);
-
-            driver.findElement(By.id("search-go")).click();
-        } catch (Exception e) {
-            System.out.println("Error finding class: " + e);
-        }
+        driver.get(classUrlSearch.toString());
     }
 
     // Parse the meeting time section of each class
     // Returns a string in the format DDDHHHHHHHH, (first 3 letters of the day, start hour, end hour)
     // time is in 24hr format. More info in README.md
-    public static String parseSchedule(WebDriver driver, WebElement schedule) {
-        List<WebElement> meetings = schedule.findElements(By.className("meeting"));
-        int counter = 1;
-        StringBuilder parsedMeeting = new StringBuilder();
-        for (WebElement meeting : meetings) {
-            String daysUnparsed = meeting.findElement(
-                    By.className("ui-pillbox-summary")).getAttribute("innerHTML");
-            String time = meeting.findElement(
-                    By.cssSelector("div:nth-child(" + counter + ") > span:nth-child(2)")).getText();
-            counter++;
-
-            // Parse start and end time
-            String[] timeSplit = time.split(" - ");
-            String startTime;
-            String endTime;
-            try {
-                // Parse the format and compress it
-                SimpleDateFormat displayFormat = new SimpleDateFormat("HHmm");
-                SimpleDateFormat parseFormat = new SimpleDateFormat("hh:mm a");
-                startTime = displayFormat.format(parseFormat.parse(timeSplit[0]));
-                endTime = displayFormat.format(parseFormat.parse(timeSplit[1]));
-
-                // Parse days of the week
-                // Clean and split the daysUnparsed string
-                String[] days = daysUnparsed.replace(" ", "").split(",");
-                for (String day : days) {
-                    day = day.substring(0, 3); // Get first 3 letters of each day the class is held
-                    parsedMeeting.append(day).append(startTime).append(endTime).append(",");
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        return(parsedMeeting.toString());
+    public static String parseSchedule(JSONArray meetingArray) {
+        StringBuilder scheudle = new StringBuilder();
+        return "";
     }
 
-    public static void parseClasses(WebDriver driver) {
-        waitForPageLoaded(driver);
-        waitForElementId(driver, "table1", 10);
+    public static void parseClasses(WebDriver driver, Connection conn) {
+        // waitForPageLoaded(driver);
+        JSONParser jsonParser = new JSONParser();
+        try {
+            // Firefox ONLY - Show raw data instead of JSON format
+            // waitForElementId(driver, "rawdata-tab", 10).click();
 
-        waitForElementClass(driver, "odd", 30);
-        List<WebElement> classList = driver.findElements(By.className("odd"));
-        classList.addAll(driver.findElements(By.className("even")));
+            // Extract raw data response
+            // String data = driver.findElement(By.cssSelector("pre")).getText();
+            FileReader data = new FileReader("/Users/sebastiantota/Documents/Projects/Class Scheduler/Temple-Class-Scheduler-Scraper/testing.json");
 
-        for (WebElement classElem : classList) {
-            String campus = classElem.findElement(By.cssSelector("td:nth-child(3)")).getText();
+            JSONObject obj = (JSONObject) jsonParser.parse(data);
+            JSONArray classes = (JSONArray) obj.get("data");
 
-            // Only add classes on Main campus
-            if (campus.equals("Main")) {
-                Integer crn = Integer.parseInt(classElem.findElement(By.cssSelector("td:nth-child(1)")).getText());
-                String subject = classElem.findElement(By.cssSelector("td:nth-child(2)")).getText().split(",")[0];
-                Integer creditHours = Integer.parseInt(
-                        classElem.findElement(By.cssSelector("td:nth-child(4)")).getText());
-                String title = classElem.findElement(By.cssSelector("td:nth-child(5)")).getText();
-                String capacity = classElem.findElement(By.cssSelector("td:nth-child(7)")).getText();
-                String instructor = classElem.findElement(By.cssSelector("td:nth-child(8) > a:nth-child(1)")).getText();
-                WebElement schedule = classElem.findElements(By.cssSelector
-                        ("[data-property='meetingTime']")).get(0);
-                String scheduleParsed = parseSchedule(driver, schedule);
-                // System.out.println(scheduleParsed);
-                insertClassSQL(crn, subject, creditHours, title, capacity, instructor, scheduleParsed);
+            for (int i = 0; i < classes.size(); i++) {
+                JSONObject aClass = (JSONObject) classes.get(i);
+
+                // Get faculty object
+                JSONArray aFacultyArr = (JSONArray) (((JSONObject) classes.get(i)).get("faculty"));
+                JSONObject aFaculty = (JSONObject)aFacultyArr.get(0);
+
+                // Get schedule object
+                JSONArray aMeetingArr = (JSONArray) ((JSONObject) classes.get(i)).get("meetingsFaculty");
+
+                Integer crn = Integer.parseInt((String)aClass.get("courseReferenceNumber"));
+                String subject = (String) aClass.get("subject");
+                Integer creditHours = (int) (long) aClass.get("creditHourLow");
+                String title = (String) aClass.get("courseTitle");
+                Integer capacity = (int) (long) aClass.get("seatsAvailable");
+                String instructor = (String) aFaculty.get("displayName");
+                String schedule = parseSchedule(aMeetingArr);
+
+                System.out.println(crn);
+                System.out.println(subject);
+                System.out.println(creditHours);
+                System.out.println(title);
+                System.out.println(capacity);
+                System.out.println(instructor);
+                System.out.println("");
+
             }
+
+        } catch (Exception e) {
+            System.out.println(e);
         }
+
     }
 
     public static void insertClassSQL(Integer crn, String subject, Integer creditHours, String title,
-                                 String capacity, String instructor, String schedule) {
-
+                                 String capacity, String instructor, String schedule, Connection conn) {
         try {
-            String url = "jdbc:mysql://" + System.getenv("AWS_URL") + "/class_scheduler";
-            Connection conn = DriverManager.getConnection(
-                    url, System.getenv("AWS_USER"), System.getenv("AWS_PASS"));
             String query = null;
             try {
                 query = "INSERT IGNORE INTO Classes (crn, subject, creditHours, title, capacity, instructor, schedule) "
@@ -286,53 +254,65 @@ public class Main {
 
     }
 
-    // args = [Term, Subject, StartCourseNumber, EndCourseNumber]
+    // args = [Subject, StartCourseNumber, EndCourseNumber]
     // If no EndCourseNumber specified then only search for specific course number
     public static void main (String[] args) {
+        Scanner scr = new Scanner(System.in);
+        WebDriver driver = null;
+        Connection conn = null;
+        parseClasses(driver, conn);
+        scr.nextLine();
+
+        /*
+        String url = "jdbc:mysql://" + System.getenv("AWS_URL") + "/class_scheduler";
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(
+                    url, System.getenv("AWS_USER"), System.getenv("AWS_PASS"));
+        } catch (Exception e) {
+            System.out.println("Error connecting to database: " + e);
+        }
+
         String baseurl = "https://www.temple.edu/apply/common/cdcheck.asp";
 
         // DEFAULT VALUES
-        String term;
+        String term = "2020 Fall";
         String subject;
         String startCourseNumber;
         String endCourseNumber;
 
-        term = "2020 Fall";
-        subject = "CIS";
-        startCourseNumber = "0";
-        endCourseNumber = "4999";
+        WebDriver driver = createDriver(true);
+        driver.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/classSearch");
 
-        /*
+
         // Assign values based on arguments, or lack there of (default values for testing)
         if (args.length == 0) {
             // No arguments specified (testing)
-            term = "2020 Fall";
             subject = "CIS";
-            startCourseNumber = "0";
-            endCourseNumber = "4999";
+            startCourseNumber = "2166";
+            endCourseNumber = "2166";
         } else {
             // Use arguments specified
-            term = args[0];
-            subject = args[1];
-            startCourseNumber = args[2];
-            endCourseNumber = args[3];
+            subject = args[0];
+            startCourseNumber = args[1];
+            endCourseNumber = args[2];
         }
-         */
 
-        WebDriver driver = createDriver(false);
         driver.get(baseurl);
 
         try {
             selectTerm(driver, term);
-            findClass(driver, subject, startCourseNumber, endCourseNumber);
-            parseClasses(driver);
-            newSearch(driver);
+            classSearch(driver, subject, startCourseNumber, endCourseNumber);
+            parseClasses(driver, conn);
             driver.close();
         } catch (Exception e) {
             System.out.println("Error executing program!");
             System.out.println(e);
             driver.close();
         }
+
+         */
+
 
     }
 
