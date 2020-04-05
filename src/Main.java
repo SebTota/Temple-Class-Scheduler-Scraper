@@ -144,12 +144,44 @@ public class Main {
         driver.get(classUrlSearch.toString());
     }
 
+    public static void appendScheduleString(StringBuilder schedule, String day, String startTime, String endTime) {
+        schedule.append(day);
+        schedule.append(startTime);
+        schedule.append(endTime);
+        schedule.append(",");
+    }
+
     // Parse the meeting time section of each class
     // Returns a string in the format DDDHHHHHHHH, (first 3 letters of the day, start hour, end hour)
     // time is in 24hr format. More info in README.md
     public static String parseSchedule(JSONArray meetingArray) {
-        StringBuilder scheudle = new StringBuilder();
-        return "";
+        StringBuilder schedule = new StringBuilder();
+
+        Iterator i = meetingArray.iterator();
+        while(i.hasNext()) {
+            JSONObject meetingObj = (JSONObject) i.next();
+            JSONObject meeting = (JSONObject) meetingObj.get("meetingTime");
+
+            // Time class occurs
+            String startTime = (String) meeting.get("beginTime");
+            String endTime = (String) meeting.get("endTime");
+
+
+
+            // What days of the week the class occurs
+            Boolean mon = (Boolean) meeting.get("monday");
+            Boolean tue = (Boolean) meeting.get("tuesday");
+            Boolean wed = (Boolean) meeting.get("wednesday");
+            Boolean thu = (Boolean) meeting.get("thursday");
+            Boolean fri = (Boolean) meeting.get("friday");
+
+            if (mon) { appendScheduleString(schedule, "Mon", startTime, endTime); }
+            if (tue) { appendScheduleString(schedule, "Tue", startTime, endTime); }
+            if (wed) { appendScheduleString(schedule, "Wed", startTime, endTime); }
+            if (thu) { appendScheduleString(schedule, "Thu", startTime, endTime); }
+            if (fri) { appendScheduleString(schedule, "Fri", startTime, endTime); }
+        }
+        return schedule.toString();
     }
 
     public static void parseClasses(WebDriver driver, Connection conn) {
@@ -190,6 +222,7 @@ public class Main {
                 System.out.println(title);
                 System.out.println(capacity);
                 System.out.println(instructor);
+                System.out.println(schedule);
                 System.out.println("");
 
             }
