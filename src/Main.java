@@ -23,6 +23,8 @@ import org.json.simple.parser.JSONParser;
 
 import com.google.gson.Gson;
 
+import static java.lang.System.exit;
+
 public class Main {
     // Return correct WebDriver based on clients operating system
     public static WebDriver createDriver(boolean headless) {
@@ -125,13 +127,16 @@ public class Main {
 
             return 1;
         } catch (Exception e) {
-            System.out.println("Failed selecting term");
+            System.out.println("Failed selecting term: " + e);
             return -1;
         }
     }
 
+    // Builds the url that is needed to search for a specific class
+    // Class term is hardcoded '202036'
     public static void classSearch(WebDriver driver, String subject, String startCourseNumber,
                                  String endCourseNumber) {
+        System.out.println("Creating class search url");
         StringBuilder classUrlSearch = new StringBuilder();
         classUrlSearch.append("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?txt_subject=");
         classUrlSearch.append(subject);
@@ -139,9 +144,10 @@ public class Main {
         classUrlSearch.append(startCourseNumber);
         classUrlSearch.append("&txt_course_number_range_to=");
         classUrlSearch.append(endCourseNumber);
-        classUrlSearch.append("&txt_term=202036&pageMaxSize=100&sortDirection=asc");
-
+        classUrlSearch.append("&txt_term=202036&pageMaxSize=1000&sortDirection=asc");
+        System.out.println("Searching for class");
         driver.get(classUrlSearch.toString());
+        System.out.println("Completed searching for class");
     }
 
     public static void appendScheduleString(StringBuilder schedule, String day, String startTime, String endTime) {
@@ -166,8 +172,6 @@ public class Main {
             String startTime = (String) meeting.get("beginTime");
             String endTime = (String) meeting.get("endTime");
 
-
-
             // What days of the week the class occurs
             Boolean mon = (Boolean) meeting.get("monday");
             Boolean tue = (Boolean) meeting.get("tuesday");
@@ -185,15 +189,17 @@ public class Main {
     }
 
     public static void parseClasses(WebDriver driver, Connection conn) {
-        // waitForPageLoaded(driver);
+        waitForPageLoaded(driver);
         JSONParser jsonParser = new JSONParser();
         try {
             // Firefox ONLY - Show raw data instead of JSON format
-            // waitForElementId(driver, "rawdata-tab", 10).click();
+            try { waitForElementId(driver, "rawdata-tab", 10).click(); }
+            catch (Exception e) {System.out.println("Can not find rawdata-tab button!"); }
 
             // Extract raw data response
-            // String data = driver.findElement(By.cssSelector("pre")).getText();
-            FileReader data = new FileReader("/Users/sebastiantota/Documents/Projects/Class Scheduler/Temple-Class-Scheduler-Scraper/testing.json");
+            String data = driver.findElement(By.cssSelector("pre")).getText();
+
+            // FileReader data = new FileReader("/Users/sebastiantota/Documents/Projects/Class Scheduler/Temple-Class-Scheduler-Scraper/testing.json");
 
             JSONObject obj = (JSONObject) jsonParser.parse(data);
             JSONArray classes = (JSONArray) obj.get("data");
@@ -210,36 +216,31 @@ public class Main {
 
                 Integer crn = Integer.parseInt((String)aClass.get("courseReferenceNumber"));
                 String subject = (String) aClass.get("subject");
+                Integer courseNumber =  Integer.parseInt(((String)aClass.get("courseNumber")));
                 Integer creditHours = (int) (long) aClass.get("creditHourLow");
                 String title = (String) aClass.get("courseTitle");
                 Integer capacity = (int) (long) aClass.get("seatsAvailable");
                 String instructor = (String) aFaculty.get("displayName");
                 String schedule = parseSchedule(aMeetingArr);
 
-                System.out.println(crn);
-                System.out.println(subject);
-                System.out.println(creditHours);
-                System.out.println(title);
-                System.out.println(capacity);
-                System.out.println(instructor);
-                System.out.println(schedule);
-                System.out.println("");
-
+                insertClassSQL(crn, subject, courseNumber, creditHours, title, capacity, instructor, schedule, conn);
             }
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Error parsing class: " + e);
         }
 
     }
 
-    public static void insertClassSQL(Integer crn, String subject, Integer creditHours, String title,
-                                 String capacity, String instructor, String schedule, Connection conn) {
+    public static void insertClassSQL(Integer crn, String subject, Integer courseNumber, Integer creditHours, String title,
+                                 Integer capacity, String instructor, String schedule, Connection conn) {
         try {
+            // Avoid duplicate inserts
+            // https://stackoverflow.com/questions/61069118/java-sql-insert-into-table-only-new-entries
             String query = null;
             try {
-                query = "INSERT IGNORE INTO Classes (crn, subject, creditHours, title, capacity, instructor, schedule) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                query = "INSERT INTO Classes (crn, subject, courseNumber, creditHours, title, capacity, instructor, schedule) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE crn = VALUES(crn)";
             } catch(Exception e) {
                 conn.close();
             }
@@ -247,13 +248,13 @@ public class Main {
             PreparedStatement preparedStmt = conn.prepareStatement(query);
             preparedStmt.setInt(1, crn);
             preparedStmt.setString(2, subject);
-            preparedStmt.setInt(3, creditHours);
-            preparedStmt.setString(4, title);
-            preparedStmt.setString(5, capacity);
-            preparedStmt.setString(6, instructor);
-            preparedStmt.setString(7, schedule);
+            preparedStmt.setInt(3, courseNumber);
+            preparedStmt.setInt(4, creditHours);
+            preparedStmt.setString(5, title);
+            preparedStmt.setInt(6, capacity);
+            preparedStmt.setString(7, instructor);
+            preparedStmt.setString(8, schedule);
             preparedStmt.executeUpdate();
-            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -290,13 +291,6 @@ public class Main {
     // args = [Subject, StartCourseNumber, EndCourseNumber]
     // If no EndCourseNumber specified then only search for specific course number
     public static void main (String[] args) {
-        Scanner scr = new Scanner(System.in);
-        WebDriver driver = null;
-        Connection conn = null;
-        parseClasses(driver, conn);
-        scr.nextLine();
-
-        /*
         String url = "jdbc:mysql://" + System.getenv("AWS_URL") + "/class_scheduler";
         Connection conn = null;
         try {
@@ -314,16 +308,22 @@ public class Main {
         String startCourseNumber;
         String endCourseNumber;
 
+        int testing = 1;
+        if (testing == 0) {
+            parseClasses(null, conn);
+            exit(-1);
+        }
+
         WebDriver driver = createDriver(true);
         driver.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/classSearch");
-
 
         // Assign values based on arguments, or lack there of (default values for testing)
         if (args.length == 0) {
             // No arguments specified (testing)
             subject = "CIS";
-            startCourseNumber = "2166";
-            endCourseNumber = "2166";
+            // Default course numbers 0-4999 includes all undergrad classes (5000+ are grad classes)
+            startCourseNumber = "0";
+            endCourseNumber = "4999";
         } else {
             // Use arguments specified
             subject = args[0];
@@ -344,7 +344,10 @@ public class Main {
             driver.close();
         }
 
-         */
+
+        try {
+            conn.close(); // Close SQL connection
+        } catch (Exception e) { System.out.println("Error close SQL connection: " + e); }
 
 
     }
