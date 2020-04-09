@@ -222,8 +222,10 @@ public class Main {
                 Integer capacity = (int) (long) aClass.get("seatsAvailable");
                 String instructor = (String) aFaculty.get("displayName");
                 String schedule = parseSchedule(aMeetingArr);
+                String subjectCourse = (String) aClass.get("subjectCourse");
 
-                insertClassSQL(crn, subject, courseNumber, creditHours, title, capacity, instructor, schedule, conn);
+                insertClassSQL(crn, subject, courseNumber, creditHours, title, capacity,
+                        instructor, schedule, subjectCourse, conn);
             }
 
         } catch (Exception e) {
@@ -233,14 +235,15 @@ public class Main {
     }
 
     public static void insertClassSQL(Integer crn, String subject, Integer courseNumber, Integer creditHours, String title,
-                                 Integer capacity, String instructor, String schedule, Connection conn) {
+                                 Integer capacity, String instructor, String schedule, String subjectCourse, Connection conn) {
         try {
             // Avoid duplicate inserts
             // https://stackoverflow.com/questions/61069118/java-sql-insert-into-table-only-new-entries
             String query = null;
             try {
-                query = "INSERT INTO Classes (crn, subject, courseNumber, creditHours, title, capacity, instructor, schedule) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE crn = VALUES(crn)";
+                query = "INSERT INTO Classes (crn, subject, courseNumber, creditHours, title, " +
+                        "capacity, instructor, schedule, subjectCourse) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE crn = VALUES(crn)";
             } catch(Exception e) {
                 conn.close();
             }
@@ -254,6 +257,7 @@ public class Main {
             preparedStmt.setInt(6, capacity);
             preparedStmt.setString(7, instructor);
             preparedStmt.setString(8, schedule);
+            preparedStmt.setString(9, subjectCourse);
             preparedStmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
