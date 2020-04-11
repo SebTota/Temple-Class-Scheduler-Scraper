@@ -13,10 +13,7 @@ import java.io.FileReader;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -27,15 +24,15 @@ public class Main {
     // Return correct WebDriver based on clients operating system
     public static WebDriver createDriver(boolean headless) {
         String OS = System.getProperty("os.name");
-        if ("Mac OS X".equals(OS)) {// MAC OS
+        if (OS.equals("Mac OS X")) {// MAC OS
             System.setProperty("webdriver.gecko.driver",
                     "drivers/geckodriver-v26-mac");
-        } else if ("Linux".equals(OS)) {// LINUX
+        } else if (OS.equals("Linux")) {// LINUX
             System.setProperty("webdriver.gecko.driver",
                     "drivers/geckodriver-v26-linux");
-        } else if ("Windows".equals(OS)) {// WINDOWS
+        } else if (OS.contains("Windows")) {// WINDOWS
             System.setProperty("webdriver.gecko.driver",
-                    "drivers/geckodriver-v26-win");
+                    "drivers/geckodriver-v26-win.exe");
         }
         return (createFirefox(headless));
     }
@@ -84,17 +81,6 @@ public class Main {
         }
     }
 
-    public static List<WebElement> waitForElementClass(WebDriver driver, String className, int timeoutTime) {
-        try{
-            WebDriverWait wait = new WebDriverWait(driver, timeoutTime);
-            return(wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className(className))));
-        } catch (Exception e) {
-            System.out.println("Class: " + className);
-            System.out.println("Timed out searching for element. Element not present.");
-            return null;
-        }
-    }
-
     public static void executeJavascript(WebDriver driver, String executeString) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript(executeString);
@@ -117,7 +103,7 @@ public class Main {
             foundTermButton.click();
              */
 
-            waitForElementId(driver, "202036", 10).click();
+            Objects.requireNonNull(waitForElementId(driver, "202036", 10)).click();
 
             WebElement termContinueButton = waitForElementId(driver, "term-go", 10);
             if (termContinueButton == null) { return -1; }
@@ -135,16 +121,15 @@ public class Main {
     public static void classSearch(WebDriver driver, String subject, String startCourseNumber,
                                  String endCourseNumber) {
         System.out.println("Creating class search url");
-        StringBuilder classUrlSearch = new StringBuilder();
-        classUrlSearch.append("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?txt_subject=");
-        classUrlSearch.append(subject);
-        classUrlSearch.append("&txt_course_number_range=");
-        classUrlSearch.append(startCourseNumber);
-        classUrlSearch.append("&txt_course_number_range_to=");
-        classUrlSearch.append(endCourseNumber);
-        classUrlSearch.append("&txt_term=202036&pageMaxSize=1000&sortDirection=asc");
         System.out.println("Searching for class");
-        driver.get(classUrlSearch.toString());
+        String classUrlSearch = "https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?txt_subject=" +
+                subject +
+                "&txt_course_number_range=" +
+                startCourseNumber +
+                "&txt_course_number_range_to=" +
+                endCourseNumber +
+                "&txt_term=202036&pageMaxSize=100000&sortDirection=asc";
+        driver.get(classUrlSearch);
         System.out.println("Completed searching for class");
     }
 
@@ -165,6 +150,9 @@ public class Main {
             for (Object o : meetingArray) {
                 JSONObject meetingObj = (JSONObject) o;
                 JSONObject meeting = (JSONObject) meetingObj.get("meetingTime");
+
+                // Check if class is online only
+                if (meeting.get("meetingType") == "OLL") { return "Online"; }
 
                 // Time class occurs
                 String startTime = (String) meeting.get("beginTime");
@@ -201,17 +189,17 @@ public class Main {
     }
 
     public static void parseClasses(WebDriver driver, String term, Connection conn) {
-        // waitForPageLoaded(driver);
+        waitForPageLoaded(driver);
         JSONParser jsonParser = new JSONParser();
         try {
             // Firefox ONLY - Show raw data instead of JSON format
-            //try { waitForElementId(driver, "rawdata-tab", 10).click(); }
-            // catch (Exception e) {System.out.println("Can not find rawdata-tab button!"); }
+            try { waitForElementId(driver, "rawdata-tab", 10).click(); }
+            catch (Exception e) {System.out.println("Can not find rawdata-tab button!"); }
 
             // Extract raw data response
-            // String data = driver.findElement(By.cssSelector("pre")).getText();
+            String data = driver.findElement(By.cssSelector("pre")).getText();
 
-            FileReader data = new FileReader("C:\\Users\\anon\\Documents\\Projects\\Class-Scheduler\\Temple-Class-Scheduler-Scraper\\ExampleResponse.json");
+            // FileReader data = new FileReader("C:\\Users\\anon\\Documents\\Projects\\Class-Scheduler\\Temple-Class-Scheduler-Scraper\\ExampleResponse.json");
 
             JSONObject obj = (JSONObject) jsonParser.parse(data);
             JSONArray classes = (JSONArray) obj.get("data");
@@ -235,6 +223,9 @@ public class Main {
                     JSONArray aMeetingArr = (JSONArray) ((JSONObject) classes.get(i)).get("meetingsFaculty");
                     String schedule = parseSchedule(aMeetingArr);
 
+                    String campus = null;
+                    try { campus = (String) aClass.get("campusDescription"); } catch (Exception ignore) {}
+
                     crn = Integer.parseInt((String)aClass.get("courseReferenceNumber"));
                     String subject = (String) aClass.get("subject");
                     String subjectCourse = (String) aClass.get("subjectCourse");
@@ -248,9 +239,12 @@ public class Main {
                     boolean full = false;
                     if ((capacity - currentCapacity) >= capacity) { full = true; }
 
+                    if (instructor.equals("")) { instructor = null; }
+                    if (schedule.equals("")) { schedule = null; }
+
                     // Insert to sql
                     insertClassSQL(term, crn, subject, courseNumber, subjectCourse, creditHours, title, capacity,
-                            currentCapacity, full, instructor, schedule, conn);
+                            currentCapacity, full, instructor, schedule, campus, conn);
 
                 } catch (Exception e) {
                     System.out.println("Error parsing class crn: " + Integer.toString(crn) + "! Error: " + e);
@@ -266,7 +260,8 @@ public class Main {
 
     public static void insertClassSQL(String term, Integer crn, String subject, Integer courseNumber, String subjectCourse,
                                       Integer creditHours, String title, Integer capacity, Integer currentCapacity,
-                                      boolean capacityFull, String instructor, String schedule,  Connection conn) {
+                                      boolean capacityFull, String instructor, String schedule, String campus,
+                                      Connection conn) {
         try {
             // Avoid duplicate inserts
             // https://stackoverflow.com/questions/61069118/java-sql-insert-into-table-only-new-entries
@@ -275,8 +270,8 @@ public class Main {
                 // Insert new class if it doesn't exist, and update capacity if class already exists in database
                 query = "INSERT INTO Classes (" +
                         "crn, subject, courseNumber, subjectCourse, creditHours, title, " +
-                        "capacity, currentCapacity, capacityFull, instructor, schedule, term) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                        "capacity, currentCapacity, capacityFull, instructor, schedule, campus) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                         "ON DUPLICATE KEY UPDATE capacity=?, currentCapacity=?, capacityFull=?," +
                         "instructor=?, schedule=?";
             } catch(Exception e) {
@@ -296,13 +291,14 @@ public class Main {
             preparedStmt.setBoolean(9, capacityFull);
             preparedStmt.setString(10, instructor);
             preparedStmt.setString(11, schedule);
+            preparedStmt.setString(12, campus);
 
             // Update
-            preparedStmt.setInt(12, capacity);
-            preparedStmt.setInt(13, currentCapacity);
-            preparedStmt.setBoolean(14, capacityFull);
-            preparedStmt.setString(15, instructor);
-            preparedStmt.setString(16, schedule);
+            preparedStmt.setInt(13, capacity);
+            preparedStmt.setInt(14, currentCapacity);
+            preparedStmt.setBoolean(15, capacityFull);
+            preparedStmt.setString(16, instructor);
+            preparedStmt.setString(17, schedule);
 
             preparedStmt.executeUpdate();
         } catch (SQLException e) {
@@ -358,22 +354,22 @@ public class Main {
         String startCourseNumber;
         String endCourseNumber;
 
-        int testing = 0;
+        int testing = 1;
         if (testing == 0) {
             parseClasses(null, term, conn);
             exit(-1);
         }
 
-        WebDriver driver = createDriver(true);
+        WebDriver driver = createDriver(false);
         driver.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/classSearch");
 
         // Assign values based on arguments, or lack there of (default values for testing)
         if (args.length == 0) {
             // No arguments specified (testing)
-            subject = "CIS";
+            subject = "";
             // Default course numbers 0-4999 includes all undergrad classes (5000+ are grad classes)
-            startCourseNumber = "0";
-            endCourseNumber = "4999";
+            startCourseNumber = "1000";
+            endCourseNumber = "2000";
         } else {
             // Use arguments specified
             subject = args[0];

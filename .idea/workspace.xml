@@ -2,33 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b67882bb-32b4-4464-beaa-504520dcff38" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/TESTSCHULE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/libs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/selenium_java_3_141_59.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/build/build.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/demo/demo.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/generated/generated.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/legacy/legacy.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/main/core-api/core-api.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/main/core-impl/core-impl.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/main/protocol-impl/protocol-impl.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/main/user-api/user-api.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/main/user-impl/user-impl.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jars/mysql-connector-java-8.0.19/src/test/test.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/TESTSCHULE_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/client_combined_3_141_59.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/gson_2_8_6.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/okio_1_14_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Temple-Class-Scheduler-Scraper.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Temple-Class-Scheduler-Scraper.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/TESTSCHULE/META-INF/MANIFEST.MF" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -78,30 +53,46 @@
       <updated>1586469687651</updated>
       <workItem from="1586469689879" duration="3391000" />
       <workItem from="1586609329975" duration="140000" />
-      <workItem from="1586609497677" duration="4089000" />
+      <workItem from="1586609497677" duration="10340000" />
     </task>
+    <task id="LOCAL-00001" summary="If class already exists in database update capacity, instructor, and schedule info.">
+      <created>1586616065459</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1586616065459</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="If class already exists in database update capacity, instructor, and schedule info." />
+    <option name="LAST_COMMIT_MESSAGE" value="If class already exists in database update capacity, instructor, and schedule info." />
+  </component>
   <component name="WindowStateProjectService">
-    <state width="1234" height="263" key="GridCell.Tab.0.bottom" timestamp="1586615784921">
+    <state x="247" y="3" key="CommitChangelistDialog2" timestamp="1586616057578">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state width="1234" height="263" key="GridCell.Tab.0.bottom/0.0.2560.1040@0.0.2560.1040" timestamp="1586615784921" />
-    <state width="1234" height="263" key="GridCell.Tab.0.center" timestamp="1586615784921">
+    <state x="247" y="3" key="CommitChangelistDialog2/0.0.2560.1040@0.0.2560.1040" timestamp="1586616057578" />
+    <state width="1234" height="265" key="GridCell.Tab.0.bottom" timestamp="1586642391360">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state width="1234" height="263" key="GridCell.Tab.0.center/0.0.2560.1040@0.0.2560.1040" timestamp="1586615784921" />
-    <state width="1234" height="263" key="GridCell.Tab.0.left" timestamp="1586615784921">
+    <state width="1234" height="265" key="GridCell.Tab.0.bottom/0.0.2560.1040@0.0.2560.1040" timestamp="1586642391360" />
+    <state width="1234" height="265" key="GridCell.Tab.0.center" timestamp="1586642391360">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state width="1234" height="263" key="GridCell.Tab.0.left/0.0.2560.1040@0.0.2560.1040" timestamp="1586615784921" />
-    <state width="1234" height="263" key="GridCell.Tab.0.right" timestamp="1586615784921">
+    <state width="1234" height="265" key="GridCell.Tab.0.center/0.0.2560.1040@0.0.2560.1040" timestamp="1586642391360" />
+    <state width="1234" height="265" key="GridCell.Tab.0.left" timestamp="1586642391360">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
-    <state width="1234" height="263" key="GridCell.Tab.0.right/0.0.2560.1040@0.0.2560.1040" timestamp="1586615784921" />
+    <state width="1234" height="265" key="GridCell.Tab.0.left/0.0.2560.1040@0.0.2560.1040" timestamp="1586642391360" />
+    <state width="1234" height="265" key="GridCell.Tab.0.right" timestamp="1586642391360">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="1234" height="265" key="GridCell.Tab.0.right/0.0.2560.1040@0.0.2560.1040" timestamp="1586642391360" />
     <state width="2517" height="344" key="GridCell.Tab.1.bottom" timestamp="1586473314138">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
@@ -122,16 +113,9 @@
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="239" y="208" width="1269" height="715" key="SettingsEditor/0.0.2560.1040@0.0.2560.1040" timestamp="1586612417437" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Main.java</url>
-          <line>219</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <state x="1512" y="252" key="Vcs.Push.Dialog.v2" timestamp="1586616075747">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state x="1512" y="252" key="Vcs.Push.Dialog.v2/0.0.2560.1040@0.0.2560.1040" timestamp="1586616075747" />
   </component>
 </project>
