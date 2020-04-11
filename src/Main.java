@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static java.lang.System.exit;
 import java.io.FileReader;
 import java.sql.*;
 import java.text.ParseException;
@@ -21,9 +22,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.google.gson.Gson;
-
-import static java.lang.System.exit;
 
 public class Main {
     // Return correct WebDriver based on clients operating system
@@ -161,71 +159,103 @@ public class Main {
     // Returns a string in the format DDDHHHHHHHH, (first 3 letters of the day, start hour, end hour)
     // time is in 24hr format. More info in README.md
     public static String parseSchedule(JSONArray meetingArray) {
-        StringBuilder schedule = new StringBuilder();
+        StringBuilder schedule = new StringBuilder("");
 
-        Iterator i = meetingArray.iterator();
-        while(i.hasNext()) {
-            JSONObject meetingObj = (JSONObject) i.next();
-            JSONObject meeting = (JSONObject) meetingObj.get("meetingTime");
+        try {
+            for (Object o : meetingArray) {
+                JSONObject meetingObj = (JSONObject) o;
+                JSONObject meeting = (JSONObject) meetingObj.get("meetingTime");
 
-            // Time class occurs
-            String startTime = (String) meeting.get("beginTime");
-            String endTime = (String) meeting.get("endTime");
+                // Time class occurs
+                String startTime = (String) meeting.get("beginTime");
+                String endTime = (String) meeting.get("endTime");
 
-            // What days of the week the class occurs
-            Boolean mon = (Boolean) meeting.get("monday");
-            Boolean tue = (Boolean) meeting.get("tuesday");
-            Boolean wed = (Boolean) meeting.get("wednesday");
-            Boolean thu = (Boolean) meeting.get("thursday");
-            Boolean fri = (Boolean) meeting.get("friday");
+                // What days of the week the class occurs
+                Boolean mon = (Boolean) meeting.get("monday");
+                Boolean tue = (Boolean) meeting.get("tuesday");
+                Boolean wed = (Boolean) meeting.get("wednesday");
+                Boolean thu = (Boolean) meeting.get("thursday");
+                Boolean fri = (Boolean) meeting.get("friday");
 
-            if (mon) { appendScheduleString(schedule, "Mon", startTime, endTime); }
-            if (tue) { appendScheduleString(schedule, "Tue", startTime, endTime); }
-            if (wed) { appendScheduleString(schedule, "Wed", startTime, endTime); }
-            if (thu) { appendScheduleString(schedule, "Thu", startTime, endTime); }
-            if (fri) { appendScheduleString(schedule, "Fri", startTime, endTime); }
+                if (mon) {
+                    appendScheduleString(schedule, "Mon", startTime, endTime);
+                }
+                if (tue) {
+                    appendScheduleString(schedule, "Tue", startTime, endTime);
+                }
+                if (wed) {
+                    appendScheduleString(schedule, "Wed", startTime, endTime);
+                }
+                if (thu) {
+                    appendScheduleString(schedule, "Thu", startTime, endTime);
+                }
+                if (fri) {
+                    appendScheduleString(schedule, "Fri", startTime, endTime);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error parsing schedule: " + e);
+            return "";
         }
         return schedule.toString();
     }
 
-    public static void parseClasses(WebDriver driver, Connection conn) {
-        waitForPageLoaded(driver);
+    public static void parseClasses(WebDriver driver, String term, Connection conn) {
+        // waitForPageLoaded(driver);
         JSONParser jsonParser = new JSONParser();
         try {
             // Firefox ONLY - Show raw data instead of JSON format
-            try { waitForElementId(driver, "rawdata-tab", 10).click(); }
-            catch (Exception e) {System.out.println("Can not find rawdata-tab button!"); }
+            //try { waitForElementId(driver, "rawdata-tab", 10).click(); }
+            // catch (Exception e) {System.out.println("Can not find rawdata-tab button!"); }
 
             // Extract raw data response
-            String data = driver.findElement(By.cssSelector("pre")).getText();
+            // String data = driver.findElement(By.cssSelector("pre")).getText();
 
-            // FileReader data = new FileReader("/Users/sebastiantota/Documents/Projects/Class Scheduler/Temple-Class-Scheduler-Scraper/testing.json");
+            FileReader data = new FileReader("C:\\Users\\anon\\Documents\\Projects\\Class-Scheduler\\Temple-Class-Scheduler-Scraper\\ExampleResponse.json");
 
             JSONObject obj = (JSONObject) jsonParser.parse(data);
             JSONArray classes = (JSONArray) obj.get("data");
 
+            int crn = -1;
             for (int i = 0; i < classes.size(); i++) {
-                JSONObject aClass = (JSONObject) classes.get(i);
+                try {
+                    JSONObject aClass = (JSONObject) classes.get(i);
 
-                // Get faculty object
-                JSONArray aFacultyArr = (JSONArray) (((JSONObject) classes.get(i)).get("faculty"));
-                JSONObject aFaculty = (JSONObject)aFacultyArr.get(0);
+                    // Get faculty object
+                    String instructor = "";
+                    try {
+                        JSONArray aFacultyArr = (JSONArray) (((JSONObject) classes.get(i)).get("faculty"));
+                        JSONObject aFaculty = (JSONObject)aFacultyArr.get(0);
+                        instructor = (String) aFaculty.get("displayName");
+                    } catch(Exception ignore) {
+                        System.out.println("Can't find instructor for crn: " + crn);
+                    }
 
-                // Get schedule object
-                JSONArray aMeetingArr = (JSONArray) ((JSONObject) classes.get(i)).get("meetingsFaculty");
+                    // Get schedule object
+                    JSONArray aMeetingArr = (JSONArray) ((JSONObject) classes.get(i)).get("meetingsFaculty");
+                    String schedule = parseSchedule(aMeetingArr);
 
-                Integer crn = Integer.parseInt((String)aClass.get("courseReferenceNumber"));
-                String subject = (String) aClass.get("subject");
-                Integer courseNumber =  Integer.parseInt(((String)aClass.get("courseNumber")));
-                Integer creditHours = (int) (long) aClass.get("creditHourLow");
-                String title = (String) aClass.get("courseTitle");
-                Integer capacity = (int) (long) aClass.get("seatsAvailable");
-                String instructor = (String) aFaculty.get("displayName");
-                String schedule = parseSchedule(aMeetingArr);
-                String subjectCourse = (String) aClass.get("subjectCourse");
+                    crn = Integer.parseInt((String)aClass.get("courseReferenceNumber"));
+                    String subject = (String) aClass.get("subject");
+                    String subjectCourse = (String) aClass.get("subjectCourse");
+                    Integer courseNumber =  Integer.parseInt(((String)aClass.get("courseNumber")));
+                    Integer creditHours = (int) (long) aClass.get("creditHourLow");
+                    String title = (String) aClass.get("courseTitle");
 
-                insertClassSQL(crn, subject, courseNumber, creditHours, title, capacity,
-                        instructor, schedule, subjectCourse, conn);
+                    // Parse capacity info
+                    Integer capacity = (int) (long) aClass.get("maximumEnrollment");
+                    Integer currentCapacity = (int)(long) aClass.get("seatsAvailable");
+                    boolean full = false;
+                    if ((capacity - currentCapacity) >= capacity) { full = true; }
+
+                    // Insert to sql
+                    insertClassSQL(term, crn, subject, courseNumber, subjectCourse, creditHours, title, capacity,
+                            currentCapacity, full, instructor, schedule, conn);
+
+                } catch (Exception e) {
+                    System.out.println("Error parsing class crn: " + Integer.toString(crn) + "! Error: " + e);
+                }
+
             }
 
         } catch (Exception e) {
@@ -234,30 +264,46 @@ public class Main {
 
     }
 
-    public static void insertClassSQL(Integer crn, String subject, Integer courseNumber, Integer creditHours, String title,
-                                 Integer capacity, String instructor, String schedule, String subjectCourse, Connection conn) {
+    public static void insertClassSQL(String term, Integer crn, String subject, Integer courseNumber, String subjectCourse,
+                                      Integer creditHours, String title, Integer capacity, Integer currentCapacity,
+                                      boolean capacityFull, String instructor, String schedule,  Connection conn) {
         try {
             // Avoid duplicate inserts
             // https://stackoverflow.com/questions/61069118/java-sql-insert-into-table-only-new-entries
             String query = null;
             try {
-                query = "INSERT INTO Classes (crn, subject, courseNumber, creditHours, title, " +
-                        "capacity, instructor, schedule, subjectCourse) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE crn = VALUES(crn)";
+                // Insert new class if it doesn't exist, and update capacity if class already exists in database
+                query = "INSERT INTO Classes (" +
+                        "crn, subject, courseNumber, subjectCourse, creditHours, title, " +
+                        "capacity, currentCapacity, capacityFull, instructor, schedule, term) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                        "ON DUPLICATE KEY UPDATE capacity=?, currentCapacity=?, capacityFull=?," +
+                        "instructor=?, schedule=?";
             } catch(Exception e) {
                 conn.close();
             }
 
             PreparedStatement preparedStmt = conn.prepareStatement(query);
+            // Insert New
             preparedStmt.setInt(1, crn);
             preparedStmt.setString(2, subject);
             preparedStmt.setInt(3, courseNumber);
-            preparedStmt.setInt(4, creditHours);
-            preparedStmt.setString(5, title);
-            preparedStmt.setInt(6, capacity);
-            preparedStmt.setString(7, instructor);
-            preparedStmt.setString(8, schedule);
-            preparedStmt.setString(9, subjectCourse);
+            preparedStmt.setString(4, subjectCourse);
+            preparedStmt.setInt(5, creditHours);
+            preparedStmt.setString(6, title);
+            preparedStmt.setInt(7, capacity);
+            preparedStmt.setInt(8, currentCapacity);
+            preparedStmt.setBoolean(9, capacityFull);
+            preparedStmt.setString(10, instructor);
+            preparedStmt.setString(11, schedule);
+
+            // Update
+            preparedStmt.setInt(12, capacity);
+            preparedStmt.setInt(13, currentCapacity);
+            preparedStmt.setBoolean(14, capacityFull);
+            preparedStmt.setString(15, instructor);
+            preparedStmt.setString(16, schedule);
+
             preparedStmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -312,9 +358,9 @@ public class Main {
         String startCourseNumber;
         String endCourseNumber;
 
-        int testing = 1;
+        int testing = 0;
         if (testing == 0) {
-            parseClasses(null, conn);
+            parseClasses(null, term, conn);
             exit(-1);
         }
 
@@ -340,7 +386,7 @@ public class Main {
         try {
             selectTerm(driver, term);
             classSearch(driver, subject, startCourseNumber, endCourseNumber);
-            parseClasses(driver, conn);
+            parseClasses(driver, term, conn);
             driver.close();
         } catch (Exception e) {
             System.out.println("Error executing program!");
