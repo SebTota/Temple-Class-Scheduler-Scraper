@@ -2,6 +2,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -14,6 +15,7 @@ import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,6 +25,10 @@ import org.json.simple.parser.JSONParser;
 public class Main {
     // Return correct WebDriver based on clients operating system
     public static WebDriver createDriver(boolean headless) {
+        System.setProperty("webdriver.chrome.driver", "drivers/chromedriver_win32/chromedriver.exe");
+        return new ChromeDriver();
+
+        /*
         String OS = System.getProperty("os.name");
         if (OS.equals("Mac OS X")) {// MAC OS
             System.setProperty("webdriver.gecko.driver",
@@ -35,6 +41,8 @@ public class Main {
                     "drivers/geckodriver-v26-win.exe");
         }
         return (createFirefox(headless));
+
+         */
     }
 
     // Create a Firefox WebDriver
@@ -128,7 +136,12 @@ public class Main {
                 startCourseNumber +
                 "&txt_course_number_range_to=" +
                 endCourseNumber +
-                "&txt_term=202036&pageMaxSize=100000&sortDirection=asc";
+                "&txt_campus=ONL%2CMN%2CAMB%2CCC&txt_term=202036&pageOffset=0&pageMaxSize=10000&sortColumn=subjectDescription&sortDirection=asc";
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        } catch (Exception e) {
+            System.out.println("Sleep in classSearch() failed! : " + e);
+        }
         driver.get(classUrlSearch);
         System.out.println("Completed searching for class");
     }
@@ -189,20 +202,25 @@ public class Main {
     }
 
     public static void parseClasses(WebDriver driver, String term, Connection conn) {
+        System.out.println("Parsing class");
+
         waitForPageLoaded(driver);
         JSONParser jsonParser = new JSONParser();
         try {
             // Firefox ONLY - Show raw data instead of JSON format
-            try { waitForElementId(driver, "rawdata-tab", 10).click(); }
-            catch (Exception e) {System.out.println("Can not find rawdata-tab button!"); }
+            // try { waitForElementId(driver, "rawdata-tab", 10).click(); }
+            // catch (Exception e) {System.out.println("Can not find rawdata-tab button!"); }
 
             // Extract raw data response
             String data = driver.findElement(By.cssSelector("pre")).getText();
+            System.out.println(data);
 
             // FileReader data = new FileReader("C:\\Users\\anon\\Documents\\Projects\\Class-Scheduler\\Temple-Class-Scheduler-Scraper\\ExampleResponse.json");
 
             JSONObject obj = (JSONObject) jsonParser.parse(data);
             JSONArray classes = (JSONArray) obj.get("data");
+
+            System.out.println("JSON object and array inti complete");
 
             int crn = -1;
             for (int i = 0; i < classes.size(); i++) {
@@ -240,9 +258,11 @@ public class Main {
                     if ((capacity - currentCapacity) >= capacity) { full = true; }
 
                     if (instructor.equals("")) { instructor = null; }
-                    if (schedule.equals("")) { schedule = null; }
+                    // Assume class is online if no schedule is given
+                    if (schedule.equals("")) { schedule = "online"; }
 
                     // Insert to sql
+                    System.out.println("Inserting to sql");
                     insertClassSQL(term, crn, subject, courseNumber, subjectCourse, creditHours, title, capacity,
                             currentCapacity, full, instructor, schedule, campus, conn);
 
@@ -369,7 +389,7 @@ public class Main {
             subject = "";
             // Default course numbers 0-4999 includes all undergrad classes (5000+ are grad classes)
             startCourseNumber = "1000";
-            endCourseNumber = "2000";
+            endCourseNumber = "1999";
         } else {
             // Use arguments specified
             subject = args[0];
@@ -377,19 +397,34 @@ public class Main {
             endCourseNumber = args[2];
         }
 
-        driver.get(baseurl);
+        for (int i = 800; i < 4000; i += 100) {
+            try {
+                startCourseNumber = Integer.toString(i);
+                endCourseNumber = Integer.toString(i+100);
 
-        try {
-            selectTerm(driver, term);
-            classSearch(driver, subject, startCourseNumber, endCourseNumber);
-            parseClasses(driver, term, conn);
-            driver.close();
-        } catch (Exception e) {
-            System.out.println("Error executing program!");
-            System.out.println(e);
-            driver.close();
+                while(startCourseNumber.length() < 4) {
+                    startCourseNumber = "0" + startCourseNumber;
+                }
+
+                while(endCourseNumber.length() < 4) {
+                    endCourseNumber = "0" + endCourseNumber;
+                }
+
+                System.out.println(startCourseNumber + " : " + endCourseNumber);
+
+                driver.get(baseurl);
+                selectTerm(driver, term);
+                classSearch(driver, subject, startCourseNumber, endCourseNumber);
+                parseClasses(driver, term, conn);
+                Thread.sleep(15000);
+            } catch (Exception e) {
+                System.out.println("Error executing program!");
+                System.out.println(e);
+                driver.close();
+            }
         }
 
+        driver.close();
 
         try {
             conn.close(); // Close SQL connection
